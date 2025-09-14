@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Distraction-free YouTube Player</title>
+<title>YouTube Player with Dark/Light Toggle</title>
 
 <style>
   body {
     font-family: sans-serif;
     margin: 0;
-    min-height: 200vh; /* enough height to scroll */
+    min-height: 115vh;
+    background: #ffffff;
+    color: #000000;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,9 +19,11 @@
 
   h1 { margin-top: 2rem; }
 
+  /* рядок вводу та кнопки */
   .input-row {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
     width: 90%;
     max-width: 700px;
@@ -30,18 +34,25 @@
     flex: 1 1 auto;
     padding: 0.6rem 1rem;
     font-size: 1rem;
-    border: 2px solid #4a90e2;
+    border: 2px solid #aaa;
     border-radius: 4px;
+    background: #fff;
+    color: #000;
     outline: none;
   }
 
-  button {
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    background: #eee;
+  /* квадратна кнопка перемикача теми */
+  #themeToggle {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    background: #fff;
     border: 2px solid #aaa;
     border-radius: 4px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #player {
@@ -64,15 +75,34 @@
     transition: opacity 0.4s ease;
     font-size: 0.95rem;
   }
-
   footer.visible { opacity: 1; }
-
   footer a {
     color: #4a90e2;
     text-decoration: none;
   }
-
   footer a:hover { text-decoration: underline; }
+
+  /* --- темна тема --- */
+  body.dark {
+    background: #121212;
+    color: #f0f0f0;
+  }
+  body.dark input {
+    background: #1e1e1e;
+    color: #fff;
+    border: 2px solid #444;
+  }
+  body.dark #themeToggle {
+    background: #1e1e1e;
+    color: #fff;
+    border: 2px solid #555;
+  }
+  body.dark footer {
+    background: #1e1e1e;
+    border-top: 1px solid #333;
+    color: #aaa;
+  }
+  body.dark footer a { color: #4a90e2; }
 </style>
 </head>
 <body>
@@ -81,12 +111,11 @@
 
 <div class="input-row">
   <input id="ytLink" placeholder="Paste a YouTube URL here">
-  <button onclick="showVideo()">Show Video</button>
+  <button id="themeToggle">☀️</button>
 </div>
 
 <div id="player"></div>
 
-<!-- put your own handle inside href/text -->
 <footer id="credit">
   made by <a href="https://twitter.com/vladkryvda" target="_blank">@vladkryvda</a>
 </footer>
@@ -96,7 +125,6 @@ function showVideo() {
   const url = document.getElementById('ytLink').value.trim();
   let match = url.match(/v=([^&]+)/);
   if (!match) match = url.match(/youtu\.be\/([^?]+)/);
-
   if (match) {
     const id = match[1];
     document.getElementById('player').innerHTML =
@@ -106,18 +134,28 @@ function showVideo() {
                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                allowfullscreen></iframe>`;
   } else {
-    alert('Could not find a valid YouTube video ID.');
+    document.getElementById('player').innerHTML = '';
   }
 }
 
-// show footer only when user scrolls down a bit
+// відео показується одразу при зміні поля
+document.getElementById('ytLink').addEventListener('input', showVideo);
+
+// показувати/ховати футер при скролі
 window.addEventListener('scroll', () => {
   const footer = document.getElementById('credit');
-  if (window.scrollY > 50) {
+  if (window.scrollY > 100) {
     footer.classList.add('visible');
   } else {
     footer.classList.remove('visible');
   }
+});
+
+// перемикач теми
+document.getElementById('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const btn = document.getElementById('themeToggle');
+  btn.textContent = document.body.classList.contains('dark') ? '🌙' : '️️️☀️';
 });
 </script>
 
