@@ -3,71 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YouTube Player Embed</title>
+<title>Distraction-free YouTube Player</title>
 
 <style>
   body {
     font-family: sans-serif;
-    padding: 2rem;
-    text-align: center;
-    min-height: 150vh; /* щоб був скрол для перевірки */
+    margin: 0;
+    min-height: 200vh; /* enough height to scroll */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  /* --- input + button в одному рядку --- */
+  h1 { margin-top: 2rem; }
+
   .input-row {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap; /* щоб на малих екранах переносилось */
+    width: 90%;
+    max-width: 700px;
+    margin: 1.5rem auto;
   }
 
   input {
-    flex: 1 1 300px;
-    max-width: 500px;
-    padding: 0.5rem;
+    flex: 1 1 auto;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #4a90e2;
+    border-radius: 4px;
+    outline: none;
   }
 
   button {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    background: #eee;
+    border: 2px solid #aaa;
+    border-radius: 4px;
     cursor: pointer;
   }
 
-  iframe {
+  #player {
     margin-top: 2rem;
     width: 560px;
     height: 315px;
-    max-width: 100%;
+    max-width: 90%;
   }
 
-  /* --- прихований футер --- */
   footer {
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     text-align: center;
-    margin-top: 4rem;
-    color: #555;
+    padding: 0.8rem 0;
+    background: #fff;
+    border-top: 1px solid #ccc;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    font-size: 0.95rem;
   }
 
-  footer.visible {
-    opacity: 1;
-  }
+  footer.visible { opacity: 1; }
 
   footer a {
-    color: #1DA1F2; /* Twitter blue */
+    color: #4a90e2;
     text-decoration: none;
   }
 
-  footer a:hover {
-    text-decoration: underline;
-  }
+  footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
-<h1>Distration-free YouTube Player</h1>
+<h1>Distraction-free YouTube Player</h1>
 
-<!-- Поле вводу + кнопка в одному рядку -->
 <div class="input-row">
   <input id="ytLink" placeholder="Paste a YouTube URL here">
   <button onclick="showVideo()">Show Video</button>
@@ -75,7 +86,7 @@
 
 <div id="player"></div>
 
-<!-- Прихований футер -->
+<!-- put your own handle inside href/text -->
 <footer id="credit">
   made by <a href="https://twitter.com/vladkryvda" target="_blank">@vladkryvda</a>
 </footer>
@@ -83,30 +94,29 @@
 <script>
 function showVideo() {
   const url = document.getElementById('ytLink').value.trim();
-
-  // Шукаємо ID відео: стандартне посилання або коротке
   let match = url.match(/v=([^&]+)/);
-  if (!match) {
-    match = url.match(/youtu\.be\/([^?]+)/);
-  }
+  if (!match) match = url.match(/youtu\.be\/([^?]+)/);
 
   if (match) {
     const id = match[1];
     document.getElementById('player').innerHTML =
-      `<iframe src="https://www.youtube.com/embed/${id}"
+      `<iframe width="560" height="315"
+               src="https://www.youtube.com/embed/${id}"
                frameborder="0"
                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                allowfullscreen></iframe>`;
   } else {
-    alert('Could not find a valid YouTube video.');
+    alert('Could not find a valid YouTube video ID.');
   }
 }
 
-// Показуємо футер, коли користувач доскролив до низу
+// show footer only when user scrolls down a bit
 window.addEventListener('scroll', () => {
   const footer = document.getElementById('credit');
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 10) {
+  if (window.scrollY > 50) {
     footer.classList.add('visible');
+  } else {
+    footer.classList.remove('visible');
   }
 });
 </script>
