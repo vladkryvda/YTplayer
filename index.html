@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Player Embed</title>
+<style>
+  body { font-family: sans-serif; padding: 2rem; text-align: center; }
+  input { width: 60%; padding: 0.5rem; }
+  button { padding: 0.5rem 1rem; margin-left: 0.5rem; }
+  iframe { margin-top: 2rem; width: 560px; height: 315px; max-width: 100%; }
+</style>
+</head>
+<body>
+
+<h1>YouTube Embed Player</h1>
+
+<input id="ytLink" placeholder="Paste a YouTube URL here">
+<button onclick="showVideo()">Show Video</button>
+
+<div id="player"></div>
+
+<script>
+function showVideo() {
+  const url = document.getElementById('ytLink').value.trim();
+
+  // шукаємо ID відео у стандартному посиланні
+  // приклади: https://www.youtube.com/watch?v=abc123, https://youtu.be/abc123
+  let match = url.match(/v=([^&]+)/);
+  if (!match) {
+    match = url.match(/youtu\.be\/([^?]+)/);
+  }
+
+  if (match) {
+    const id = match[1];
+    document.getElementById('player').innerHTML =
+      `<iframe src="https://www.youtube.com/embed/${id}"
+               frameborder="0"
+               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+               allowfullscreen></iframe>`;
+  } else {
+    alert('Could not find a valid YouTube video ID.');
+  }
+}
+</script>
+
+</body>
+</html>
