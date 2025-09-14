@@ -3,12 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YouTube Player Embed</title>
+<title>Distractless YouTube Player</title>
 <style>
-  body { font-family: sans-serif; padding: 2rem; text-align: center; }
-  input { width: 60%; padding: 0.5rem; }
-  button { padding: 0.5rem 1rem; margin-left: 0.5rem; }
-  iframe { margin-top: 2rem; width: 560px; height: 315px; max-width: 100%; }
+  body {
+    font-family: sans-serif;
+    padding: 2rem;
+    text-align: center;
+    margin: 0;
+    min-height: 150vh; /* робимо сторінку трохи довшою, щоб була прокрутка */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  input {
+    width: 60%;
+    padding: 0.5rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+  }
+  iframe {
+    margin-top: 2rem;
+    width: 560px;
+    height: 315px;
+    max-width: 100%;
+  }
+
+  /* Стилі для блоку з посиланням */
+  #contact {
+    margin-top: auto;      /* притискає до низу */
+    padding: 2rem 0;
+    opacity: 0;            /* невидимий спочатку */
+    transition: opacity 0.6s ease;
+  }
+  #contact.show {
+    opacity: 1;            /* з'являється плавно */
+  }
 </style>
 </head>
 <body>
@@ -20,12 +52,16 @@
 
 <div id="player"></div>
 
+<!-- Блок контакту, який видно тільки після скролу -->
+<div id="contact">
+  <p>Need to contact me? <a href="https://x.com/yourhandle" target="_blank">Follow / message on X</a></p>
+</div>
+
 <script>
 function showVideo() {
   const url = document.getElementById('ytLink').value.trim();
 
-  // шукаємо ID відео у стандартному посиланні
-  // приклади: https://www.youtube.com/watch?v=abc123, https://youtu.be/abc123
+  // шукаємо ID відео у стандартних посиланнях
   let match = url.match(/v=([^&]+)/);
   if (!match) {
     match = url.match(/youtu\.be\/([^?]+)/);
@@ -42,6 +78,15 @@ function showVideo() {
     alert('Could not find a valid YouTube video ID.');
   }
 }
+
+// Показуємо блок з посиланням, коли користувач прокрутив ~200px вниз
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 200) {
+    document.getElementById('contact').classList.add('show');
+  } else {
+    document.getElementById('contact').classList.remove('show');
+  }
+});
 </script>
 
 </body>
