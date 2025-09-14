@@ -3,83 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Distractless YouTube Player</title>
+<title>Distraction-free YouTube Player</title>
 <style>
+  :root {
+    --bg: #f9f9f9;
+    --card: #ffffff;
+    --text: #111;
+    --button: #000;
+    --button-text: #fff;
+    --video-bg: #333;
+  }
+
+  * { box-sizing: border-box; }
+
   body {
-    font-family: sans-serif;
-    padding: 2rem;
-    text-align: center;
     margin: 0;
-    min-height: 150vh; /* робимо сторінку трохи довшою, щоб була прокрутка */
+    font-family: sans-serif;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    align-items: center;
+    min-height: 150vh; /* enough space to scroll */
   }
 
-  input {
-    width: 60%;
-    padding: 0.5rem;
+  .container {
+    background: var(--card);
+    margin-top: 3rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
   }
+
+  .input-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    max-width: 500px;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #000;
+    border-radius: 8px;
+  }
+
   button {
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
+    background: var(--button);
+    color: var(--button-text);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
   }
-  iframe {
-    margin-top: 2rem;
-    width: 560px;
-    height: 315px;
-    max-width: 100%;
+  button:hover {
+    background: #222;
   }
 
-  /* Стилі для блоку з посиланням */
-  #contact {
-    margin-top: auto;      /* притискає до низу */
+  #player {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 ratio */
+    background: var(--video-bg);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  #player iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* footer link */
+  footer {
+    margin-top: auto;
+    text-align: center;
     padding: 2rem 0;
-    opacity: 0;            /* невидимий спочатку */
+    opacity: 0;
     transition: opacity 0.6s ease;
   }
-  #contact.show {
-    opacity: 1;            /* з'являється плавно */
+  footer.show { opacity: 1; }
+  footer a {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
   }
 </style>
 </head>
 <body>
 
-<h1>YouTube Embed Player</h1>
+<div class="container">
+  <div class="input-row">
+    <input id="ytLink" type="text" placeholder="Paste the YouTube URL">
+    <button onclick="showVideo()">Play</button>
+  </div>
 
-<input id="ytLink" placeholder="Paste a YouTube URL here">
-<button onclick="showVideo()">Show Video</button>
-
-<div id="player"></div>
-
-<!-- Блок контакту, який видно тільки після скролу -->
-<div id="contact">
-  <p>Need to contact me? <a href="https://x.com/yourhandle" target="_blank">Follow / message on X</a></p>
+  <div id="player">
+    <!-- video will appear here -->
+  </div>
 </div>
+
+<footer id="contact">
+  made by <a href="https://x.com/vladkryvda" target="_blank">@yourhandle</a>
+</footer>
 
 <script>
 function showVideo() {
   const url = document.getElementById('ytLink').value.trim();
-
-  // шукаємо ID відео у стандартних посиланнях
   let match = url.match(/v=([^&]+)/);
-  if (!match) {
-    match = url.match(/youtu\.be\/([^?]+)/);
-  }
-
+  if (!match) match = url.match(/youtu\.be\/([^?]+)/);
   if (match) {
     const id = match[1];
     document.getElementById('player').innerHTML =
       `<iframe src="https://www.youtube.com/embed/${id}"
-               frameborder="0"
                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                allowfullscreen></iframe>`;
   } else {
-    alert('Could not find a valid YouTube video ID.');
+    alert('Please paste a valid YouTube link.');
   }
 }
 
-// Показуємо блок з посиланням, коли користувач прокрутив ~200px вниз
+// reveal footer once user scrolls ~200px
 window.addEventListener('scroll', () => {
   if (window.scrollY > 200) {
     document.getElementById('contact').classList.add('show');
